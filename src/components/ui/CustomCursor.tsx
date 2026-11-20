@@ -130,7 +130,7 @@ export const CustomCursor: React.FC = () => {
               left: ripple.x,
               top: ripple.y,
             }}
-            className="pointer-events-none fixed z-[119] -translate-x-1/2 -translate-y-1/2"
+            className="pointer-events-none fixed z-[9998] -translate-x-1/2 -translate-y-1/2"
           >
             <div className="h-9 w-9 rounded-full border-2 border-[#00E599] shadow-[0_0_12px_rgba(0,229,153,0.6)]" />
             <div className="absolute inset-1.5 rounded-full border border-[#D4AF37]/80" />
@@ -142,7 +142,7 @@ export const CustomCursor: React.FC = () => {
       {visible ? (
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none fixed top-0 left-0 z-[120]"
+          className="pointer-events-none fixed top-0 left-0 z-[9999]"
           style={{ x: smoothX, y: smoothY }}
         >
           {/* Offset so the index fingertip sits directly on the pointer hotspot */}

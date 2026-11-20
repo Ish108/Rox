@@ -196,7 +196,7 @@ export const Navbar: React.FC = () => {
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation"
-            className="fixed inset-0 z-[100] flex flex-col justify-between bg-[#060B18] p-6 md:hidden"
+            className="fixed inset-0 z-[2500] flex flex-col justify-between bg-[#060B18] p-6 md:hidden"
           >
             <div>
               <div className="flex items-center justify-between border-b border-slate-400/15 pb-4">

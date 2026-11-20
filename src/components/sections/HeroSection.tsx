@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { CLUB } from '@/data/club';
 import { useBookingDrawer } from '@/context/BookingContext';
-import { HeroRing3D } from '@/components/three/HeroRing3D';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { RoundClock } from '@/components/ui/RoundClock';
 import { VelocityMarquee } from '@/components/ui/VelocityMarquee';
+
+const HeroRing3D = lazy(() =>
+  import('@/components/three/HeroRing3D').then((m) => ({
+    default: m.HeroRing3D,
+  }))
+);
 
 export const HeroSection: React.FC = () => {
   const { openDrawer } = useBookingDrawer();
@@ -31,8 +36,17 @@ export const HeroSection: React.FC = () => {
   return (
     <section id="r01" aria-labelledby="hero-heading" className="relative overflow-hidden -mt-20 pt-20">
       <div className="relative flex min-h-[calc(100svh-1rem)] flex-col justify-between">
-        {/* Full-Bleed Realistic 3D Boxing Ring Arena */}
-        <HeroRing3D />
+        {/* Full-Bleed Realistic 3D Boxing Ring Arena (lazy-loaded so hero headline paints instantly) */}
+        <Suspense
+          fallback={
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,229,153,0.12)_0%,rgba(5,5,7,0.96)_68%)]"
+            />
+          }
+        >
+          <HeroRing3D />
+        </Suspense>
 
         <div className="pointer-events-none relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:px-6 sm:py-24 lg:px-8">
           <div className="pointer-events-auto flex flex-col items-center">

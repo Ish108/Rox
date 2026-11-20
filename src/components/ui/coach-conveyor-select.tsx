@@ -130,12 +130,17 @@ function project(g: Geo, x: number, z: number) {
 }
 
 function makeGeo(width: number, n: number): Geo {
-  const cardW = clamp(width * 0.22, 165, 220);
+  const isMobile = width < 640;
+  const cardW = isMobile
+    ? clamp(width * 0.34, 118, 165)
+    : clamp(width * 0.22, 165, 220);
   const cardH = Math.round(cardW * 1.28);
-  const l = Math.max(1, n) * SPACING * cardW;
-  const r = Math.min(CURVE * cardW * 1.25, l / (2 * Math.PI));
-  const s = Math.max(40, (l - 2 * Math.PI * r) / 2);
-  const kb = width < 640 ? 0.56 : 0.66;
+  const spacing = isMobile ? 1.42 : SPACING;
+  const l = Math.max(1, n) * spacing * cardW;
+  const maxRByWidth = Math.max(48, (width - cardW * 1.08) * 0.46);
+  const r = Math.min(CURVE * cardW * 1.25, maxRByWidth, l / (2 * Math.PI));
+  const s = Math.max(isMobile ? 16 : 40, (l - 2 * Math.PI * r) / 2);
+  const kb = isMobile ? 0.56 : 0.66;
 
   const g: Geo = {
     width,
@@ -701,6 +706,8 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
                   <img
                     src={coach.image}
                     alt={coach.imageAlt}
+                    loading="lazy"
+                    decoding="async"
                     draggable={false}
                     className={`h-full w-full object-cover transition-all duration-500 ${
                       isActive ? "grayscale-0 scale-[1.03]" : "grayscale"
@@ -720,7 +727,7 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
                   {/* Bottom Scrim + Street Character Card HUD */}
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-[#050507] via-[#050507]/85 to-transparent p-3.5 pt-12"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-[#050507] via-[#050507]/85 to-transparent p-2.5 pt-10 sm:p-3.5 sm:pt-12"
                   >
                     <span className="flex items-center justify-between gap-2">
                       <span
@@ -733,13 +740,13 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
                         {coach.slotCode}
                       </span>
                       {coach.isFounder ? (
-                        <span className="bg-gold-grad rounded px-1.5 py-0.5 font-mono text-[9px] font-bold text-[#050507]">
+                        <span className="bg-gold-grad rounded px-1.5 py-0.5 font-mono text-[8px] sm:text-[9px] font-bold text-[#050507]">
                           FOUNDER
                         </span>
                       ) : null}
                     </span>
 
-                    <span className="mt-1 font-display-rox text-2xl leading-none text-[#F6F7F2]">
+                    <span className="mt-1 font-display-rox text-lg sm:text-2xl leading-none text-[#F6F7F2]">
                       {coach.name}
                     </span>
                     <span className="mt-1 font-mono text-[10px] uppercase tracking-wider text-[#94A3B8]">
