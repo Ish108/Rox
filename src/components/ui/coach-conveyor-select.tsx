@@ -26,6 +26,13 @@ const RUN = 0;
 const SEEK = 1;
 const DRAG = 2;
 
+function getCoachCallName(name: string) {
+  return name
+    .replace(/^Ex\.\s*Capt\.\s*/i, "")
+    .replace(/\s+[A-Z]$/i, "")
+    .trim();
+}
+
 type Geo = {
   width: number;
   height: number;
@@ -562,7 +569,7 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
                     : "border-white/[0.12] bg-[#0A0C12] text-[#94A3B8] hover:text-[#F6F7F2]"
                 }`}
               >
-                {coach.slotCode} · {coach.name.split(" ").slice(-1)[0]}
+                {coach.slotCode} · {getCoachCallName(coach.name)}
               </button>
             );
           })}
@@ -606,7 +613,7 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
         ref={stageRef}
         role="group"
         aria-label="Coach character selection conveyor"
-        className="relative w-full touch-pan-y select-none overflow-hidden rounded-3xl border border-white/[0.08] bg-[#050507]"
+        className="relative isolate z-0 w-full touch-pan-y select-none overflow-hidden rounded-3xl border border-white/[0.08] bg-[#050507]"
         style={{ height: geo ? geo.height : 420 }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -813,7 +820,7 @@ function CoachInspectDialog({
       role="dialog"
       aria-modal="true"
       aria-label={coach.name}
-      className="fixed inset-0 z-[130] flex items-center justify-center p-4 sm:p-8"
+      className="fixed inset-0 z-[2500] flex items-center justify-center p-4 sm:p-8"
     >
       <div
         aria-hidden="true"
@@ -821,7 +828,7 @@ function CoachInspectDialog({
         className="fixed inset-0 bg-black/80 backdrop-blur-md"
       />
 
-      <div className="relative z-10 grid w-full max-w-3xl gap-6 overflow-hidden rounded-3xl border border-white/[0.12] bg-[#0A0C12] p-6 sm:grid-cols-12 sm:p-8 shadow-2xl">
+      <div className="relative z-10 grid max-h-[90vh] w-full max-w-3xl gap-6 overflow-y-auto rounded-3xl border border-white/[0.12] bg-[#0A0C12] p-6 sm:grid-cols-12 sm:p-8 shadow-2xl">
         <button
           type="button"
           onClick={onClose}
@@ -871,7 +878,7 @@ function CoachInspectDialog({
             onClick={onBook}
             className="bg-gold-grad inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-xs font-bold uppercase tracking-wider text-[#050507] hover:brightness-110"
           >
-            Train With {coach.name.split(" ").slice(-1)[0]}
+            Train With {getCoachCallName(coach.name)}
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>

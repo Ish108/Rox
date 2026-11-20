@@ -61,7 +61,7 @@ export const BookingDrawer: React.FC = () => {
     <AnimatePresence>
       {isOpen ? (
         <div
-          className="fixed inset-0 z-[110] flex justify-end"
+          className="fixed inset-0 z-[2500] flex justify-end"
           role="dialog"
           aria-modal="true"
           aria-labelledby="booking-drawer-title"
