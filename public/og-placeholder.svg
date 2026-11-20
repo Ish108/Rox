@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0A0A0C"/>
+  <rect x="32" y="32" width="1136" height="566" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+  <path d="M32 64V32H64M1136 32H1168V64M32 566V598H64M1136 598H1168V566" stroke="#D9FF00" stroke-width="2"/>
+  <text x="80" y="140" fill="#00E599" font-family="monospace" font-size="22" letter-spacing="4">EST. 2018 · BENGALURU · KABA AFFILIATED</text>
+  <text x="80" y="280" fill="#F5F5F0" font-family="system-ui, sans-serif" font-weight="800" font-size="96" letter-spacing="-3">ROX BOXING GYM</text>
+  <text x="80" y="365" fill="#D9FF00" font-family="Georgia, serif" font-style="italic" font-size="52">Bangalore's First Full-Ring Boxing Gym</text>
+  <text x="80" y="455" fill="#8E929F" font-family="system-ui, sans-serif" font-size="28">Beginner Friendly, Defense-Coach Led · 5,000 Sq. Ft. · 20' x 20' Ring</text>
+  <text x="80" y="540" fill="#F5F5F0" font-family="monospace" font-size="24">4.9/5 · 280+ GOOGLE REVIEWS · HSR EXTENSION &amp; ELECTRONIC CITY</text>
+</svg>

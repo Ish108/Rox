@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-navy-deep: #050507;
+  --color-navy-mid: #080E1E;
+  --color-navy-card: #0A0C12;
+  --color-emerald: #10B981;
+  --color-emerald-bright: #00E599;
+  --color-gold: #D4AF37;
+  --color-gold-light: #E8CA64;
+  --color-gold-dark: #9E7817;
+  --color-chalk: #F6F7F2;
+  --color-ash: #94A3B8;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+}
+
+@layer base {
+  html {
+    background-color: #050507;
+    color: var(--color-chalk);
+    font-family: 'Manrope', system-ui, sans-serif;
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  body {
+    background: #050507;
+    color: var(--color-chalk);
+    overflow-x: clip;
+    min-height: 100dvh;
+  }
+
+  /* Accessible Antique Gold focus ring */
+  :focus-visible {
+    outline: 2px solid var(--color-gold-light);
+    outline-offset: 3px;
+  }
+
+  /* Heritage Ring Poster display typography — Bebas Neue */
+  .font-display-rox {
+    font-family: 'Bebas Neue', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+  }
+}
+
+.bg-navy-card {
+  background: linear-gradient(160deg, rgba(12, 15, 23, 0.96) 0%, rgba(6, 7, 10, 0.99) 100%);
+}
+
+/* Matrix section backgrounds */
+.bg-matrix-dots {
+  background-image: radial-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-matrix-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.bg-emerald-grad {
+  background: linear-gradient(135deg, #00E599 0%, #059669 100%);
+}
+
+.bg-gold-grad {
+  background: linear-gradient(135deg, #E8CA64 0%, #C59B27 55%, #9E7817 100%);
+}
+
+.text-gold-grad {
+  background: linear-gradient(135deg, #F3DC86 0%, #D4AF37 55%, #B2881D 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-emerald-grad {
+  background: linear-gradient(135deg, #34D399 0%, #00E599 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Custom cursor hiding only on desktop fine pointers when active */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body.has-custom-cursor,
+  body.has-custom-cursor a,
+  body.has-custom-cursor button,
+  body.has-custom-cursor input,
+  body.has-custom-cursor select,
+  body.has-custom-cursor textarea,
+  body.has-custom-cursor label,
+  body.has-custom-cursor [role='button'],
+  body.has-custom-cursor [role='tab'] {
+    cursor: none !important;
+  }
+}
+
+/* Fixed full-viewport noise grain overlay */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* Clean restrained bento card */
+.bento-card {
+  position: relative;
+  background: linear-gradient(160deg, rgba(12, 15, 23, 0.96) 0%, rgba(6, 7, 10, 0.99) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.bento-card:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

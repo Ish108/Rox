@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="12" fill="#0A0A0C"/>
+  <rect x="2" y="2" width="60" height="60" rx="10" stroke="#D9FF00" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#D9FF00" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="26" letter-spacing="-1">ROX</text>
+</svg>
