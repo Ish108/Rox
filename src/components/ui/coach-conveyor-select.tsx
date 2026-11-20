@@ -49,6 +49,8 @@ type Geo = {
   a: number;
   b: number;
   band: number;
+  side: number;
+  slats: number;
 };
 
 type Point = { x: number; z: number; nx: number; nz: number };
@@ -158,6 +160,8 @@ function makeGeo(width: number, n: number): Geo {
     a: (1 + kb) / 2,
     b: (1 - kb) / (2 * r),
     band: cardW * 0.88,
+    side: isMobile ? 10 : 14,
+    slats: Math.max(12, Math.round(l / (cardW * 0.42))),
   };
 
   let top = Infinity;
@@ -184,6 +188,19 @@ function trackPath(g: Geo, offset: number) {
   return `${d}Z`;
 }
 
+function slatPath(g: Geo, offset: number) {
+  let d = "";
+  const step = g.l / g.slats;
+  const half = g.band / 2;
+  for (let j = 0; j < g.slats; j++) {
+    const p = along(g, offset + j * step);
+    const outer = project(g, p.x + p.nx * half, p.z + p.nz * half);
+    const inner = project(g, p.x - p.nx * half, p.z - p.nz * half);
+    d += `M${outer.x.toFixed(1)} ${outer.y.toFixed(1)}L${inner.x.toFixed(1)} ${inner.y.toFixed(1)}`;
+  }
+  return d;
+}
+
 function pose(g: Geo, offset: number, i: number) {
   const p = along(g, offset - i * g.pitch);
   const q = project(g, p.x, p.z);
@@ -200,6 +217,7 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
 }) => {
   const count = coaches.length;
   const stageRef = React.useRef<HTMLDivElement>(null);
+  const slatRef = React.useRef<SVGPathElement>(null);
   const cardRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const liftRefs = React.useRef<Array<HTMLSpanElement | null>>([]);
   const shadeRefs = React.useRef<Array<HTMLSpanElement | null>>([]);
@@ -307,6 +325,10 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
     if (c !== s.center) {
       s.center = c;
       setCenter(c);
+    }
+
+    if (slatRef.current) {
+      slatRef.current.setAttribute("d", slatPath(g, s.offset));
     }
   }, []);
 
@@ -619,7 +641,12 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
         role="group"
         aria-label="Coach character selection conveyor"
         className="relative isolate z-0 w-full touch-pan-y select-none overflow-hidden rounded-3xl border border-white/[0.08] bg-[#050507]"
-        style={{ height: geo ? geo.height : 420 }}
+        style={{
+          height: geo ? geo.height : 420,
+          backgroundImage:
+            "radial-gradient(ellipse at 50% 62%, rgba(212, 175, 55, 0.08) 0%, rgba(0, 229, 153, 0.04) 36%, transparent 72%), linear-gradient(rgba(212, 175, 55, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.045) 1px, transparent 1px)",
+          backgroundSize: "100% 100%, 38px 38px, 38px 38px",
+        }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -632,7 +659,7 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
           kick();
         }}
       >
-        {/* Subtle Street Arena Stadium Track */}
+        {/* 3D Extruded Stadium Turntable Track */}
         {geo && paths ? (
           <svg
             aria-hidden="true"
@@ -641,21 +668,47 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
             height={geo.height}
             viewBox={`0 0 ${geo.width} ${geo.height}`}
           >
-            <path
-              d={`${paths.outer}${paths.inner}`}
-              fillRule="evenodd"
-              fill="rgba(11, 19, 40, 0.55)"
-            />
+            {/* Extruded 3D side wall */}
             <path
               d={paths.outer}
-              fill="none"
+              transform={`translate(0, ${geo.side})`}
+              fill="#080A10"
               stroke="rgba(212, 175, 55, 0.35)"
               strokeWidth="1.5"
             />
+            {/* Turntable deck surface */}
+            <path
+              d={`${paths.outer}${paths.inner}`}
+              fillRule="evenodd"
+              fill="#111521"
+            />
+            {/* Center island */}
+            <path
+              d={paths.inner}
+              fill="#07090F"
+            />
+            {/* Moving radial slats */}
+            <path
+              ref={slatRef}
+              d={slatPath(geo, 0)}
+              fill="none"
+              stroke="rgba(212, 175, 55, 0.24)"
+              strokeWidth="1"
+            />
+            {/* Outer gold rail */}
+            <path
+              d={paths.outer}
+              fill="none"
+              stroke="#D4AF37"
+              strokeOpacity="0.8"
+              strokeWidth="1.75"
+            />
+            {/* Inner emerald island rail */}
             <path
               d={paths.inner}
               fill="none"
-              stroke="rgba(0, 229, 153, 0.3)"
+              stroke="#00E599"
+              strokeOpacity="0.55"
               strokeWidth="1.25"
             />
           </svg>
@@ -665,10 +718,20 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
         {geo &&
           coaches.map((coach, i) => {
             const isActive = (active ?? center) === i;
-            const ringBorder =
-              coach.rankColor === "gold"
-                ? "border-[#D4AF37]/75 shadow-[0_14px_40px_rgba(212,175,55,0.22)]"
-                : "border-[#00E599]/65 shadow-[0_14px_40px_rgba(0,229,153,0.18)]";
+            const isGold = coach.rankColor === "gold";
+            const ringBorder = isActive
+              ? isGold
+                ? "border-2 border-[#D4AF37] shadow-[0_0_32px_rgba(212,175,55,0.34)]"
+                : "border-2 border-[#00E599] shadow-[0_0_32px_rgba(0,229,153,0.28)]"
+              : "border border-white/20 hover:border-white/40";
+            const cornerTagClass = isActive
+              ? isGold
+                ? "bg-[#D4AF37] text-[#050507]"
+                : "bg-[#00E599] text-[#050507]"
+              : "bg-[#F6F7F2] text-[#050507]";
+            const badgeText = coach.isFounder
+              ? `${coach.slotCode} · FOUNDER`
+              : `${coach.slotCode} · ${coach.role.split(" ")[0].toUpperCase()}`;
 
             return (
               <button
@@ -697,11 +760,7 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
                   ref={(el) => {
                     liftRefs.current[i] = el;
                   }}
-                  className={`relative block h-full w-full overflow-hidden rounded-2xl border bg-[#0A0C12] transition-colors ${
-                    isActive
-                      ? ringBorder
-                      : "border-white/[0.12] hover:border-white/30"
-                  }`}
+                  className={`relative block h-full w-full overflow-hidden rounded-[3px] bg-[#0A0C12] transition-colors ${ringBorder}`}
                 >
                   <img
                     src={coach.image}
@@ -710,7 +769,7 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
                     decoding="async"
                     draggable={false}
                     className={`h-full w-full object-cover transition-all duration-500 ${
-                      isActive ? "grayscale-0 scale-[1.03]" : "grayscale"
+                      isActive ? "grayscale-0 scale-[1.03]" : "grayscale contrast-125"
                     }`}
                   />
 
@@ -724,33 +783,33 @@ export const CoachConveyorSelect: React.FC<CoachConveyorSelectProps> = ({
                     style={{ opacity: 0 }}
                   />
 
+                  {/* Top-Left Arcade Slot Badge */}
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute left-2.5 top-2.5 px-2 py-0.5 font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.14em] ${cornerTagClass}`}
+                  >
+                    {badgeText}
+                  </span>
+
                   {/* Bottom Scrim + Street Character Card HUD */}
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-[#050507] via-[#050507]/85 to-transparent p-2.5 pt-10 sm:p-3.5 sm:pt-12"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-[#050507] via-[#050507]/90 to-transparent p-2.5 pt-10 sm:p-3.5 sm:pt-14"
                   >
-                    <span className="flex items-center justify-between gap-2">
-                      <span
-                        className={`font-mono text-[10px] font-bold tracking-[0.18em] ${
-                          coach.rankColor === "gold"
-                            ? "text-[#D4AF37]"
-                            : "text-[#00E599]"
-                        }`}
-                      >
-                        {coach.slotCode}
-                      </span>
-                      {coach.isFounder ? (
-                        <span className="bg-gold-grad rounded px-1.5 py-0.5 font-mono text-[8px] sm:text-[9px] font-bold text-[#050507]">
-                          FOUNDER
-                        </span>
-                      ) : null}
+                    <span
+                      className={`truncate font-mono text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider ${
+                        isGold ? "text-[#D4AF37]" : "text-[#00E599]"
+                      }`}
+                    >
+                      {coach.tags.slice(0, 2).join(" · ")}
                     </span>
 
-                    <span className="mt-1 font-display-rox text-lg sm:text-2xl leading-none text-[#F6F7F2]">
+                    <span className="mt-0.5 truncate font-display-rox text-lg sm:text-2xl leading-none text-[#F6F7F2]">
                       {coach.name}
                     </span>
-                    <span className="mt-1 font-mono text-[10px] uppercase tracking-wider text-[#94A3B8]">
-                      {coach.tags[0]}
+
+                    <span className="mt-1.5 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.16em] text-[#CBD5E1]/85">
+                      TAP TO INSPECT →
                     </span>
                   </span>
                 </span>
